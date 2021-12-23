@@ -36,6 +36,12 @@ int monthly() {
     }
 
     //get transaction according to inputs
+    int arr = count;
+    int sold[arr];
+    int i;
+    for (i=1; i < arr; i++) {
+    	sold[i] = 0;
+	}
     max = 10;
     count = 1;
     FILE *history;
@@ -59,7 +65,6 @@ int monthly() {
     printf("| %-2s-%-2s-%-4s | %-10s | %-5s | %-23s | %-5s|\n", "T", "B", "Thn", "Customer", "Kode", "Barang", "Qty");
     printf("|------------------------------------------------------------------|\n");
     int index = 0;
-    int i;
     for (i=1; i < count; i++) {
         if (histdata[i].kode != index) {
             printf("| %-2d-%-2d-%-4d | %-10s | %-5d | %-23s | %-5d|\n", histdata[i].day, histdata[i].month, histdata[i].year, histdata[i].nama,
@@ -68,6 +73,7 @@ int monthly() {
             masuk = masuk + (histdata[i].hargajual*histdata[i].qty);
             brgterjual = brgterjual + histdata[i].qty;
             index = histdata[i].kode;
+            sold[histdata[i].kode] = sold[histdata[i].kode] + histdata[i].qty;
         }
     }
     printf(" ------------------------------------------------------------------\n\n");
@@ -77,8 +83,22 @@ int monthly() {
     printf("Jumlah barang terjual   : %d\n", brgterjual);
     printf("Modal                   : Rp%d\n", modal);
     printf("Pemasukan               : Rp%d\n", masuk);
-    printf("Keuntungan/Laba         : Rp%d\n", laba);
+    if (laba >= 0) {
+    	printf("Keuntungan/Laba		: Rp%d\n", laba);
+	} else {
+		printf("Rugi			: Rp%d\n", abs(laba));
+	}
     printf("===================================================================\n");
+    
+    printf(" =========================== RINCIAN =============================\n");
+    printf("| %-13s | %-32s | %13s|\n", "Kode", "Barang", "Terjual");
+    printf(" -----------------------------------------------------------------\n");
+    for (i=1; i < arr; i++) {
+    	if (sold[i] != 0) {
+    		printf("| %-13d | %-32s | %13d|\n", i, mstr[i].nama, sold[i]);
+		}
+	}
+	printf(" -----------------------------------------------------------------\n\n");
 
     int chs;
     printf("Cetak laporan ?\n(1 untuk ya/0 untuk kembali) ");
@@ -107,8 +127,21 @@ int monthly() {
         fprintf(report, "Jumlah barang terjual   : %d\n", brgterjual);
         fprintf(report, "Modal                   : Rp%d\n", modal);
         fprintf(report, "Pemasukan               : Rp%d\n", masuk);
-        fprintf(report, "Keuntungan/Laba         : Rp%d\n", laba);
+        if (laba >= 0) {
+    		fprintf(report, "Keuntungan/Laba         : Rp%d\n", laba);
+		} else {
+			fprintf(report, "Rugi					: Rp%d\n", abs(laba));
+		}
         fprintf(report, "====================================================================\n");
+        fprintf(report, " =========================== RINCIAN =============================\n");
+	    fprintf(report, "| %-13s | %-32s | %13s|\n", "Kode", "Barang", "Terjual");
+    	fprintf(report, " -----------------------------------------------------------------\n");
+    	for (i=1; i < arr; i++) {
+    		if (sold[i] != 0) {
+    			fprintf(report, "| %-13d | %-32s | %13d|\n", i, mstr[i].nama, sold[i]);
+			}
+		}
+		fprintf(report, " -----------------------------------------------------------------\n\n");
         printf("Berhasil mencetak laporan.\n");
     }
     printf("Selesai menampilkan laporan, tekan enter untuk kembali ...\n");
